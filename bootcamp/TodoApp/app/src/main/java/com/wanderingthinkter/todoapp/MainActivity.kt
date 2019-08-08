@@ -1,14 +1,22 @@
 package com.wanderingthinkter.todoapp
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import androidx.recyclerview.widget.LinearLayoutManager
 
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : AppCompatActivity() {
+
+    var TODOLIST_STRINGSET = "todolist_stringset"
+
+    lateinit var layoutManager: LinearLayoutManager
+    lateinit var adapter: TodoAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -16,9 +24,27 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+            val intent = Intent(view.context, CreateTodo::class.java)
+            startActivity(intent)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        updateRecycler()
+    }
+
+    fun updateRecycler() {
+        var sharedPreference = getSharedPreferences("com.wanderingthinkter.todoapp.sharedprefs", Context.MODE_PRIVATE)
+        var todoSet = sharedPreference.getStringSet(TODOLIST_STRINGSET, setOf()).toMutableSet()
+
+        layoutManager = LinearLayoutManager(this)
+        recyclerView.layoutManager = layoutManager
+
+        adapter = TodoAdapter(todoSet)
+
+        recyclerView.adapter = adapter
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -28,12 +54,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
-            R.id.action_settings -> true
-            else -> super.onOptionsItemSelected(item)
+
+        if(item.itemId == R.id.action_settings) {
+            var sharedPreference = getSharedPreferences("com.wanderingthinkter.todoapp.sharedprefs", Context.MODE_PRIVATE)
+            sharedPreference.edit().putStringSet(TODOLIST_STRINGSET, null).apply()
+            updateRecycler()
+            return true
         }
+
+        return super.onOptionsItemSelected(item)
     }
 }

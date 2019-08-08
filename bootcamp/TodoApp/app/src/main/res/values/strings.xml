@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">TodoApp</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Reset</string>
+    <string name="todo_item">Todo Item</string>
+    <string name="todo_item_hint">Title</string>
+    <string name="important_txt">Important</string>
+    <string name="save_txt">save</string>
+    <string name="noitem_warn">Add a title to save</string>
+    <string name="complete_todo">complete</string>
 </resources>
